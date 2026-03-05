@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rey Guerrero — Sabor Pacífico. Algo grande se está cocinando." />
+  <meta property="og:title" content="Rey Guerrero — Próximamente" />
+  <meta property="og:description" content="Estamos cocinando algo pa' dejarte con la boca abierta." />
+  <meta property="og:image" content="assets/images/logo-rey-guerrero.svg" />
+  <title>Rey Guerrero — Proximamente</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rancho&family=Montserrat:ital,wght@0,400;0,600;0,800;1,400;1,600;1,800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --naranja: #FF9401;
+      --naranja-oscuro: #DC8000;
+      --verde-oscuro: #0E1A0F;
+      --verde-profundo: #141F12;
+      --verde-manglar: #1C2E1A;
+      --crema: #F5F0E6;
+      --blanco: #FAFAF8;
+      --dorado: #C9A227;
+      --dorado-claro: #E8D078;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--verde-oscuro);
+      color: var(--crema);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ── Fondo con textura y viñeta ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(28, 46, 26, 0.6) 0%, transparent 70%),
+        radial-gradient(ellipse 120% 80% at 50% 100%, rgba(201, 162, 39, 0.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Partículas decorativas ── */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: drift var(--dur, 12s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes drift {
+      0%   { opacity: 0; transform: translateY(0) scale(0.8) rotate(0deg); }
+      15%  { opacity: var(--max-opacity, 0.4); }
+      85%  { opacity: var(--max-opacity, 0.4); }
+      100% { opacity: 0; transform: translateY(-120px) scale(1.1) rotate(180deg); }
+    }
+
+    /* ── Líneas decorativas de fondo ── */
+    .bg-lines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-lines::before,
+    .bg-lines::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 148, 1, 0.06);
+    }
+
+    .bg-lines::before {
+      width: 600px;
+      height: 600px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .bg-lines::after {
+      width: 900px;
+      height: 900px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ── Contenedor principal ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(2rem, 8vw, 5rem) clamp(1.5rem, 6vw, 4rem);
+      max-width: 780px;
+      width: 100%;
+      gap: 0;
+    }
+
+    /* ── Logo ── */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+      animation: logoEntrance 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    }
+
+    .logo-wrap img {
+      width: clamp(140px, 30vw, 220px);
+      height: auto;
+      filter: brightness(0) invert(1);
+      animation: logoFloat 4s ease-in-out infinite;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes logoEntrance {
+      from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    /* ── Línea separadora ── */
+    .divider {
+      width: clamp(60px, 15vw, 100px);
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--naranja), transparent);
+      margin: 0 auto clamp(1.8rem, 4vw, 3rem);
+      animation: fadeIn 0.8s ease both;
+      animation-delay: 0.6s;
+    }
+
+    /* ── Tagline principal ── */
+    .tagline {
+      font-family: 'Rancho', cursive;
+      font-size: clamp(2.2rem, 7vw, 5rem);
+      line-height: 1.1;
+      color: var(--blanco);
+      letter-spacing: 0.01em;
+      margin-bottom: clamp(1rem, 3vw, 1.8rem);
+      animation: slideUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+      animation-delay: 0.3s;
+    }
+
+    .tagline em {
+      font-style: normal;
+      color: var(--naranja);
+    }
+
+    /* ── Subtexto ── */
+    .subtexto {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.7;
+      color: rgba(245, 240, 230, 0.7);
+      max-width: 520px;
+      margin: 0 auto clamp(2.5rem, 6vw, 4rem);
+      animation: slideUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+      animation-delay: 0.5s;
+    }
+
+    .subtexto strong {
+      color: var(--crema);
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    /* ── Llama / icono ── */
+    .icon-fuego {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      margin-bottom: clamp(1.2rem, 3vw, 2rem);
+      animation: pulseGlow 2.5s ease-in-out infinite;
+      animation-delay: 1.5s;
+      display: block;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(255, 148, 1, 0.4)); }
+      50%       { transform: scale(1.15); filter: drop-shadow(0 0 20px rgba(255, 148, 1, 0.8)); }
+    }
+
+    /* ── Redes sociales ── */
+    .redes {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(1rem, 3vw, 1.8rem);
+      animation: fadeIn 0.8s ease both;
+      animation-delay: 0.9s;
+      flex-wrap: wrap;
+    }
+
+    .red-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: rgba(245, 240, 230, 0.6);
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(255, 148, 1, 0.2);
+      border-radius: 2px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .red-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 148, 1, 0.06);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+
+    .red-link:hover {
+      color: var(--naranja);
+      border-color: rgba(255, 148, 1, 0.6);
+    }
+
+    .red-link:hover::before {
+      transform: scaleX(1);
+    }
+
+    .red-link svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ── Pie de página ── */
+    .pie {
+      position: fixed;
+      bottom: clamp(1rem, 3vw, 2rem);
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 230, 0.25);
+      animation: fadeIn 1s ease both;
+      animation-delay: 1.2s;
+    }
+
+    /* ── Animaciones globales ── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── Barra tricolor sutil en la parte superior ── */
+    .tricolor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #1a5d1a 0%, #f5c842 50%, #e85d4c 100%);
+      z-index: 10;
+    }
+
+    /* ── Esquinas decorativas ── */
+    .corner {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      opacity: 0.2;
+      animation: fadeIn 1s ease both;
+      animation-delay: 1.4s;
+    }
+
+    .corner--tl {
+      top: 1.5rem;
+      left: 1.5rem;
+      border-top: 1px solid var(--naranja);
+      border-left: 1px solid var(--naranja);
+    }
+
+    .corner--tr {
+      top: 1.5rem;
+      right: 1.5rem;
+      border-top: 1px solid var(--naranja);
+      border-right: 1px solid var(--naranja);
+    }
+
+    .corner--bl {
+      bottom: 1.5rem;
+      left: 1.5rem;
+      border-bottom: 1px solid var(--naranja);
+      border-left: 1px solid var(--naranja);
+    }
+
+    .corner--br {
+      bottom: 1.5rem;
+      right: 1.5rem;
+      border-bottom: 1px solid var(--naranja);
+      border-right: 1px solid var(--naranja);
+    }
+
+    /* ── Responsive ajustes ── */
+    @media (max-height: 600px) {
+      html, body { overflow: auto; }
+      .logo-wrap { margin-bottom: 1.5rem; }
+      .corner, .pie { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Barra tricolor colombiana -->
+  <div class="tricolor" aria-hidden="true"></div>
+
+  <!-- Esquinas decorativas -->
+  <div class="corner corner--tl" aria-hidden="true"></div>
+  <div class="corner corner--tr" aria-hidden="true"></div>
+  <div class="corner corner--bl" aria-hidden="true"></div>
+  <div class="corner corner--br" aria-hidden="true"></div>
+
+  <!-- Fondo con líneas -->
+  <div class="bg-lines" aria-hidden="true"></div>
+
+  <!-- Partículas -->
+  <div class="particles" aria-hidden="true" id="particles"></div>
+
+  <!-- Contenido principal -->
+  <main class="page" role="main">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <img
+        src="assets/images/logo-rey-guerrero.svg"
+        alt="Rey Guerrero — Sabor Pacífico"
+        width="220"
+        height="200"
+      />
+    </div>
+
+    <!-- Separador -->
+    <div class="divider" aria-hidden="true"></div>
+
+    <!-- Llama -->
+    <span class="icon-fuego" aria-hidden="true">🔥</span>
+
+    <!-- Headline principal -->
+    <h1 class="tagline">
+      Estamos cocinando algo<br />
+      pa' dejarte con la<br />
+      <em>boca abierta</em>
+    </h1>
+
+    <!-- Subtexto -->
+    <p class="subtexto">
+      El menú digital del <strong>Pacífico colombiano</strong> más sabroso
+      está tomando forma. Mientras tanto, nos encontrás en Instagram
+      o escribinos directo por WhatsApp.
+    </p>
+
+    <!-- Redes -->
+    <nav class="redes" aria-label="Redes sociales">
+
+      <a
+        href="https://www.instagram.com/reyguerreropg"
+        class="red-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram de Rey Guerrero"
+      >
+        <!-- Instagram icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+        </svg>
+        @reyguerreropg
+      </a>
+
+      <a
+        href="https://wa.me/573158522818"
+        class="red-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp de Rey Guerrero"
+      >
+        <!-- WhatsApp icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        WhatsApp
+      </a>
+
+    </nav>
+
+  </main>
+
+  <!-- Pie de página -->
+  <footer class="pie">
+    Rey Guerrero &mdash; Sabor Pacífico &mdash; Cali, Colombia
+  </footer>
+
+  <script>
+    // Partículas decorativas generadas dinámicamente
+    (function () {
+      const container = document.getElementById('particles');
+      const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 18;
+
+      const colors = [
+        'rgba(255, 148, 1, 0.5)',
+        'rgba(201, 162, 39, 0.4)',
+        'rgba(255, 148, 1, 0.3)',
+        'rgba(232, 208, 120, 0.3)',
+      ];
+
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+
+        const size = Math.random() * 4 + 2;
+        const x = Math.random() * 100;
+        const y = 30 + Math.random() * 60;
+        const dur = 10 + Math.random() * 12;
+        const delay = Math.random() * -dur;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const maxOpacity = (0.15 + Math.random() * 0.3).toFixed(2);
+
+        p.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}%;
+          top: ${y}%;
+          background: ${color};
+          --dur: ${dur}s;
+          --delay: ${delay}s;
+          --max-opacity: ${maxOpacity};
+          animation-delay: ${delay}s;
+        `;
+
+        container.appendChild(p);
+      }
+    })();
+  </script>
+
+</body>
+</html>
