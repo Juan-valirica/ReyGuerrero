@@ -77,9 +77,12 @@ body {
 .liquid {
   position: fixed; inset: 0; z-index: 0;
   pointer-events: none; overflow: hidden;
-  /* Opacidad baja con la profundidad */
-  opacity: calc(1 - var(--depth) * 0.55);
-  transition: opacity 0.4s;
+  opacity: 1;
+  transition: opacity 1.2s ease;
+}
+/* Cuando el hero sale del viewport, los blobs se apagan */
+.liquid.is-paused {
+  opacity: 0;
 }
 
 .blob {
@@ -275,12 +278,13 @@ body {
 }
 @keyframes pulso-linea { 0%,100% { opacity:.4; transform: scaleY(.6); } 50% { opacity:1; transform: scaleY(1); } }
 
-/* Divisor ola */
-.hero__ola {
+/* Fade inferior del hero — gradiente invisible, sin formas */
+.hero::after {
+  content: '';
   position: absolute; bottom: 0; left: 0; right: 0;
-  line-height: 0; pointer-events: none;
+  height: 140px; pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, rgba(2,8,16,.65) 100%);
 }
-.hero__ola svg { display: block; width: 100%; }
 
 /* ════════════════════════════════════════════════════════
    SECCIONES DE MENÚ
@@ -837,14 +841,6 @@ main { position: relative; z-index: 10; }
     <div class="hero__scroll-line"></div>
     <span>Sumérgete</span>
   </div>
-  <div class="hero__ola" aria-hidden="true">
-    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0,40 C200,10 400,68 600,40 C800,12 1000,65 1200,38 C1330,20 1400,55 1440,42 L1440,80 L0,80 Z"
-            fill="rgba(6,15,28,.55)"/>
-      <path d="M0,60 C240,35 480,75 720,55 C960,35 1200,72 1440,58 L1440,80 L0,80 Z"
-            fill="rgba(2,6,14,.75)"/>
-    </svg>
-  </div>
 </section>
 
 <!-- ═══ MENÚ ═══ -->
@@ -971,10 +967,15 @@ foreach ($menu as $secKey => $sec):
 </footer>
 
 <script>
-/* ════════ PROFUNDIDAD — actualiza --depth al hacer scroll ════════ */
+/* ════════ PROFUNDIDAD + PAUSA DE BLOBS ════════ */
 (function() {
   var root = document.documentElement;
+  var liquid = document.querySelector('.liquid');
+  var aguaSup = document.querySelector('.agua-sup');
+  var blobs = document.querySelectorAll('.blob');
   var ticking = false;
+
+  /* Actualiza --depth al hacer scroll */
   function setDepth() {
     var total = document.body.scrollHeight - window.innerHeight;
     var ratio = total > 0 ? Math.min(window.scrollY / total, 1) : 0;
@@ -985,6 +986,25 @@ foreach ($menu as $secKey => $sec):
     if (!ticking) { requestAnimationFrame(setDepth); ticking = true; }
   }, { passive: true });
   setDepth();
+
+  /* Pausa los blobs cuando el hero sale del viewport.
+     El fondo sigue cambiando de color (via --depth, puro CSS),
+     pero la GPU ya no está renderizando blur costoso. */
+  var heroObs = new IntersectionObserver(function(entries) {
+    var heroVisible = entries[0].isIntersecting;
+    if (heroVisible) {
+      liquid.classList.remove('is-paused');
+      blobs.forEach(function(b) { b.style.animationPlayState = 'running'; });
+      if (aguaSup) aguaSup.style.opacity = '';
+    } else {
+      liquid.classList.add('is-paused');
+      blobs.forEach(function(b) { b.style.animationPlayState = 'paused'; });
+      if (aguaSup) aguaSup.style.opacity = '0';
+    }
+  }, { threshold: 0.05 });
+
+  var hero = document.getElementById('inicio');
+  if (hero) heroObs.observe(hero);
 })();
 
 /* ════════ NAV — active state con IntersectionObserver ════════ */
