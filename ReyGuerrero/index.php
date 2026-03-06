@@ -1,11 +1,30 @@
 <?php
 /**
  * REY GUERRERO — Menú Digital "Sabor Pacífico"
- * Experiencia Oceánica — Del manglar al abismo
+ * Versión 3 — Sección-hero + lista tipográfica
  */
 require_once 'includes/menu-data.php';
 $menu   = getMenuData();
 $rest   = getRestaurantInfo();
+
+// Gradientes placeholder por sección (mientras llegan las fotos)
+$sectionGradients = [
+    'entradas'    => ['7,60,70',   '4,30,40'],
+    'ceviches'    => ['6,70,55',   '3,38,32'],
+    'langostinos' => ['40,18,5',   '8,28,38'],
+    'pescados'    => ['8,32,52',   '3,16,28'],
+    'filetes'     => ['8,25,45',   '3,10,22'],
+    'arroces'     => ['20,14,4',   '6,16,28'],
+    'cazuelas'    => ['22,10,6',   '6,10,20'],
+    'otra-opcion' => ['8,22,35',   '3,10,18'],
+    'bebidas'     => ['5,45,38',   '3,22,20'],
+    'jugos'       => ['22,14,6',   '8,10,16'],
+    'viches'      => ['20,8,4',    '8,12,20'],
+    'infantil'    => ['6,30,58',   '3,14,28'],
+    'postres'     => ['20,8,15',   '8,5,12'],
+    'llevar'      => ['6,20,38',   '3,10,20'],
+    'salsas'      => ['8,20,8',    '3,10,5'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -14,8 +33,6 @@ $rest   = getRestaurantInfo();
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="<?php echo htmlspecialchars(SITE_DESCRIPTION); ?>"/>
   <meta name="theme-color" content="#0A6070"/>
-  <meta property="og:title" content="<?php echo htmlspecialchars(SITE_NAME); ?> — <?php echo htmlspecialchars(SITE_TAGLINE); ?>"/>
-  <meta property="og:type" content="website"/>
   <title><?php echo htmlspecialchars(SITE_NAME); ?> | <?php echo htmlspecialchars(SITE_TAGLINE); ?></title>
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg"/>
   <style>
@@ -24,36 +41,26 @@ $rest   = getRestaurantInfo();
 ════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 img { display: block; max-width: 100%; }
-button { cursor: pointer; border: none; background: none; font: inherit; }
 
 /* ════════════════════════════════════════════════════════
    TOKENS
 ════════════════════════════════════════════════════════ */
 :root {
-  /* Scroll depth: 0 = surface, 1 = abismo */
   --depth: 0;
-
-  /* Colores oceánicos */
-  --surface-h: 188;  --surface-s: 80%;  --surface-l: 18%;
-  --deep-h:    218;  --deep-s:    38%;  --deep-l:    4%;
-
+  --surface-h: 188; --surface-s: 80%; --surface-l: 18%;
   --teal-br:   #2D8E8E;
   --teal-mk:   #3D9B9B;
-  --blue-pac:  #1B4D6E;
   --naranja:   #FF9401;
-  --naranja-gl:rgba(255,148,1,.20);
   --crema:     #F5F0E6;
   --crema-dim: rgba(245,240,230,.50);
+  --crema-off: rgba(245,240,230,.28);
   --blanco:    #FAFAF8;
-
-  /* Glass */
-  --glass-bg:  rgba(255,255,255,.04);
-  --glass-bd:  rgba(255,255,255,.08);
-  --glass-bg2: rgba(255,255,255,.06);
+  --glass-bg:  rgba(255,255,255,.03);
+  --glass-bd:  rgba(255,255,255,.07);
 }
 
 /* ════════════════════════════════════════════════════════
-   BASE — cuerpo que se oscurece al bajar
+   BASE
 ════════════════════════════════════════════════════════ */
 html { height: 100%; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
@@ -62,7 +69,6 @@ body {
   font-family: Georgia, 'Times New Roman', serif;
   color: var(--crema);
   overflow-x: hidden;
-  /* Fondo que transiciona con el scroll */
   background-color: hsl(
     calc((var(--surface-h) - var(--depth) * 30) * 1deg),
     calc((var(--surface-s) - var(--depth) * 76) * 1%),
@@ -71,60 +77,43 @@ body {
 }
 
 /* ════════════════════════════════════════════════════════
-   FONDO LÍQUIDO — blobs morfológicos (misma técnica
-   que la landing, adaptada al menú)
+   FONDO LÍQUIDO
 ════════════════════════════════════════════════════════ */
 .liquid {
   position: fixed; inset: 0; z-index: 0;
   pointer-events: none; overflow: hidden;
-  opacity: 1;
-  transition: opacity 1.2s ease;
+  opacity: 1; transition: opacity 1.2s ease;
 }
-/* Cuando el hero sale del viewport, los blobs se apagan */
-.liquid.is-paused {
-  opacity: 0;
-}
+.liquid.is-paused { opacity: 0; }
 
-/* ── Gradiente cónico que rota despacio ──────────────────
-   Un solo transform:rotate() = compositor GPU puro, siempre fluido */
 .liquid::before {
   content: '';
-  position: absolute;
-  width: 160%; height: 160%;
-  top: -30%; left: -30%;
+  position: absolute; width: 160%; height: 160%; top: -30%; left: -30%;
   background: conic-gradient(
     from 0deg at 55% 45%,
-    #062535 0%, #0A3D52 22%,
-    #1B5E6E 38%, #0C4858 52%,
-    #082232 68%, #0A3040 84%,
-    #062535 100%
+    #062535 0%, #0A3D52 22%, #1B5E6E 38%,
+    #0C4858 52%, #082232 68%, #0A3040 84%, #062535 100%
   );
-  filter: blur(55px);
-  opacity: .75;
+  filter: blur(55px); opacity: .75;
   will-change: transform;
   animation: giro-lento 90s linear infinite;
 }
 @keyframes giro-lento { to { transform: rotate(360deg); } }
 
-/* ── 3 blobs — solo translate, sin border-radius animado ─
-   border-radius estático = cero repaint, movimiento siempre suave */
-.blob {
-  position: absolute;
-  will-change: transform;
-}
+.blob { position: absolute; will-change: transform; }
 .blob:nth-child(1) {
   width: 80vmax; height: 70vmax; top: -20%; left: -15%;
   border-radius: 62% 38% 46% 54% / 58% 44% 56% 42%;
   background: radial-gradient(ellipse at 45% 40%, #1B6E7A 0%, #0A2840 55%, transparent 78%);
   filter: blur(100px); opacity: .38;
-  animation: fluir1 52s cubic-bezier(0.37,0,0.63,1) infinite alternate;
+  animation: fluir1 52s cubic-bezier(.37,0,.63,1) infinite alternate;
 }
 .blob:nth-child(2) {
   width: 65vmax; height: 60vmax; bottom: -25%; right: -18%;
   border-radius: 38% 62% 54% 46% / 42% 56% 44% 58%;
   background: radial-gradient(ellipse at 55% 55%, #2D8E8E 0%, #0D3840 50%, transparent 76%);
   filter: blur(96px); opacity: .28;
-  animation: fluir2 44s cubic-bezier(0.37,0,0.63,1) infinite alternate;
+  animation: fluir2 44s cubic-bezier(.37,0,.63,1) infinite alternate;
   animation-delay: -20s;
 }
 .blob:nth-child(3) {
@@ -132,31 +121,27 @@ body {
   border-radius: 50% 50% 38% 62% / 45% 55% 45% 55%;
   background: radial-gradient(ellipse at 50% 50%, #0E4560 0%, #061828 55%, transparent 78%);
   filter: blur(88px); opacity: .24;
-  animation: fluir3 60s cubic-bezier(0.37,0,0.63,1) infinite alternate;
+  animation: fluir3 60s cubic-bezier(.37,0,.63,1) infinite alternate;
   animation-delay: -30s;
 }
-/* Translate puro — el compositor lo maneja solo */
 @keyframes fluir1 { from { transform: translate(0,0); } to { transform: translate(8vw,6vh); } }
 @keyframes fluir2 { from { transform: translate(0,0); } to { transform: translate(-7vw,-8vh); } }
 @keyframes fluir3 { from { transform: translate(0,0); } to { transform: translate(-5vw,7vh); } }
 
-/* SVG textura de agua */
+/* SVG textura agua */
 .agua-sup {
   position: fixed; inset: 0; width: 100%; height: 100%;
-  z-index: 1; pointer-events: none;
-  opacity: calc(0.06 - var(--depth) * 0.04);
+  z-index: 1; pointer-events: none; opacity: .055;
+  transition: opacity .8s;
 }
 
 /* ════════════════════════════════════════════════════════
    BURBUJAS
 ════════════════════════════════════════════════════════ */
-.burbujas {
-  position: fixed; inset: 0; z-index: 2;
-  pointer-events: none; overflow: hidden;
-}
+.burbujas { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
 .burbuja {
   position: absolute; border-radius: 50%; opacity: 0;
-  border: 1px solid rgba(61,155,155,.35);
+  border: 1px solid rgba(61,155,155,.32);
   animation: burbuja-sube linear infinite;
 }
 @keyframes burbuja-sube {
@@ -187,15 +172,14 @@ body {
 @keyframes ola-carga { from { transform: scaleX(.3); opacity:.3; } to { transform: scaleX(1); opacity:1; } }
 
 /* ════════════════════════════════════════════════════════
-   NAV — sticky, glass morphism
+   NAV
 ════════════════════════════════════════════════════════ */
 .nav {
   position: sticky; top: 0; z-index: 100;
   background: rgba(2,10,18,.72);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(45,142,142,.18);
-  padding: .5rem 0;
-  transition: background .4s;
+  padding: .5rem 0; transition: background .4s;
 }
 .nav__inner {
   display: flex; align-items: center; gap: .5rem;
@@ -204,11 +188,10 @@ body {
 }
 .nav__inner::-webkit-scrollbar { display: none; }
 .nav__brand {
-  flex-shrink: 0;
-  display: flex; align-items: center; gap: .5rem;
-  text-decoration: none;
-  color: var(--crema); font-size: .8rem; letter-spacing: .1em;
-  text-transform: uppercase; font-family: sans-serif; font-weight: 700;
+  flex-shrink: 0; display: flex; align-items: center; gap: .5rem;
+  text-decoration: none; color: var(--crema);
+  font-size: .8rem; letter-spacing: .1em; text-transform: uppercase;
+  font-family: -apple-system, sans-serif; font-weight: 700;
 }
 .nav__brand img { width: 28px; height: auto; }
 .nav__divider { width: 1px; height: 20px; background: rgba(255,255,255,.12); flex-shrink: 0; }
@@ -216,7 +199,7 @@ body {
 .nav__tab {
   flex-shrink: 0; white-space: nowrap;
   padding: .35rem .85rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, sans-serif;
   font-size: .7rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   color: rgba(245,240,230,.55);
   border: 1px solid transparent; border-radius: 20px;
@@ -225,13 +208,37 @@ body {
 }
 .nav__tab:hover { color: var(--teal-mk); border-color: rgba(45,142,142,.4); }
 .nav__tab.is-active {
-  color: var(--teal-mk);
-  border-color: rgba(45,142,142,.6);
+  color: var(--teal-mk); border-color: rgba(45,142,142,.6);
   background: rgba(45,142,142,.12);
 }
 
 /* ════════════════════════════════════════════════════════
-   HERO — superficie del océano
+   PROFUNDÓMETRO
+════════════════════════════════════════════════════════ */
+.profundometro {
+  position: fixed; right: clamp(.6rem,2vw,1.2rem); top: 50%;
+  transform: translateY(-50%); z-index: 50;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.prof-track {
+  width: 2px; height: 120px;
+  background: rgba(255,255,255,.08); border-radius: 2px;
+  position: relative; overflow: hidden;
+}
+.prof-fill {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, var(--teal-br), rgba(45,142,142,.3));
+  border-radius: 2px; height: calc(var(--depth) * 100%);
+  transition: height .1s;
+}
+.prof-label {
+  font-family: -apple-system, sans-serif;
+  font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(255,255,255,.2); writing-mode: vertical-rl;
+}
+
+/* ════════════════════════════════════════════════════════
+   HERO — pantalla completa, superficie
 ════════════════════════════════════════════════════════ */
 .hero {
   position: relative; z-index: 10;
@@ -240,8 +247,7 @@ body {
   align-items: center; justify-content: center;
   text-align: center;
   padding: clamp(4rem,10vw,7rem) clamp(1.5rem,5vw,3rem) clamp(3rem,8vw,5rem);
-  /* extra teal glow on surface */
-  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(13,100,120,.30) 0%, transparent 70%);
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(13,100,120,.28) 0%, transparent 70%);
 }
 .hero__logo {
   width: clamp(140px,25vw,200px); height: auto;
@@ -250,7 +256,7 @@ body {
   margin-bottom: clamp(1.8rem,4vw,2.8rem);
 }
 .hero__tagline {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, sans-serif;
   font-size: clamp(.65rem,1.6vw,.78rem); font-weight: 700;
   letter-spacing: .3em; text-transform: uppercase;
   color: var(--teal-mk); margin-bottom: .8rem;
@@ -259,23 +265,20 @@ body {
 .hero__title {
   font-size: clamp(2.2rem,7vw,5rem); font-weight: 700; line-height: 1.08;
   color: var(--blanco); letter-spacing: -.01em;
-  margin-bottom: 1rem;
-  animation: subir .9s ease .35s both;
+  margin-bottom: 1rem; animation: subir .9s ease .35s both;
 }
 .hero__title em { display: block; color: var(--naranja); font-style: italic; font-size: 1.1em; }
 .hero__desc {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, sans-serif;
   font-size: clamp(.88rem,2vw,1.05rem); font-style: italic;
-  color: var(--crema-dim); max-width: 440px;
-  line-height: 1.7; margin-bottom: clamp(2rem,5vw,3.5rem);
-  animation: subir .9s ease .5s both;
+  color: var(--crema-dim); max-width: 440px; line-height: 1.7;
+  margin-bottom: clamp(2rem,5vw,3.5rem); animation: subir .9s ease .5s both;
 }
 .hero__scroll {
   display: flex; flex-direction: column; align-items: center; gap: .5rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, sans-serif;
   font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
-  color: rgba(245,240,230,.38);
-  animation: aparecer 1s ease .9s both;
+  color: rgba(245,240,230,.38); animation: aparecer 1s ease .9s both;
 }
 .hero__scroll-line {
   width: 1px; height: 40px;
@@ -284,158 +287,242 @@ body {
 }
 @keyframes pulso-linea { 0%,100% { opacity:.4; transform: scaleY(.6); } 50% { opacity:1; transform: scaleY(1); } }
 
-
 /* ════════════════════════════════════════════════════════
-   SECCIONES DE MENÚ
+   SECCIÓN — HERO CON FOTO PROTAGONISTA
 ════════════════════════════════════════════════════════ */
 main { position: relative; z-index: 10; }
 
-.seccion {
-  padding: clamp(4rem,8vw,6rem) clamp(1.2rem,5vw,2.5rem);
-  max-width: 1100px; margin: 0 auto;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+.seccion { overflow: hidden; }
+
+/* — Intro visual de sección ——————————————————————————— */
+.seccion__intro {
+  position: relative;
+  height: clamp(60vh, 72vh, 88vh);
+  overflow: hidden;
+  display: flex; align-items: flex-end;
 }
 
-/* Cabecera de sección — flota */
-.seccion__head {
-  text-align: center;
-  margin-bottom: clamp(2.5rem,5vw,4rem);
-  animation: float-sec 5s ease-in-out infinite;
+/* Foto de fondo */
+.seccion__foto {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+  transition: transform .1s linear; /* parallax via JS */
+  will-change: transform;
 }
+
+/* Gradiente placeholder cuando no hay foto */
+.seccion__foto-ph {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--ph-1, 7,60,70)) 0%,
+    rgb(var(--ph-2, 4,30,40)) 100%
+  );
+}
+
+/* Overlay que oscurece y crea el espacio para el texto */
+.seccion__overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(2,8,16,.96) 0%,
+    rgba(2,8,16,.55) 35%,
+    rgba(2,8,16,.18) 65%,
+    rgba(2,8,16,.08) 100%
+  );
+}
+
+/* Partícula de borde decorativa izquierda */
+.seccion__intro::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, transparent, var(--teal-br), transparent);
+  opacity: .45; z-index: 3;
+}
+
+/* Contenido del intro */
+.seccion__intro-body {
+  position: relative; z-index: 2;
+  padding: clamp(2rem,5vw,3.5rem) clamp(1.5rem,5vw,3rem);
+  width: 100%; max-width: 900px; margin: 0 auto;
+}
+
 .seccion__num {
-  display: inline-block;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: clamp(3.5rem,8vw,6rem); font-weight: 900; line-height: 1;
+  display: block;
+  font-family: -apple-system, sans-serif;
+  font-size: clamp(5rem,14vw,11rem); font-weight: 900; line-height: .9;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(45,142,142,.25);
-  letter-spacing: -.02em;
-  user-select: none;
+  -webkit-text-stroke: 1px rgba(45,155,155,.2);
+  letter-spacing: -.04em; user-select: none;
+  margin-bottom: -.15em;
+  /* empieza fuera, entra al hacer scroll */
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .9s ease, transform .9s ease;
 }
 .seccion__titulo {
-  font-size: clamp(2rem,5.5vw,3.8rem); font-weight: 700; line-height: 1.1;
-  color: var(--blanco); letter-spacing: -.01em;
-  margin-top: -.3em;
+  font-size: clamp(2.2rem,6vw,4.5rem); font-weight: 700; line-height: 1.08;
+  color: var(--blanco); letter-spacing: -.015em;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .8s ease .1s, transform .8s ease .1s;
 }
 .seccion__subtitulo {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: clamp(.78rem,1.8vw,.9rem); font-weight: 600; letter-spacing: .25em;
-  text-transform: uppercase; color: var(--teal-mk);
-  margin-top: .5rem; margin-bottom: 1rem;
+  font-family: -apple-system, sans-serif;
+  font-size: clamp(.75rem,1.8vw,.88rem); font-weight: 600;
+  letter-spacing: .28em; text-transform: uppercase;
+  color: var(--teal-mk); margin-top: .55rem;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .75s ease .2s, transform .75s ease .2s;
 }
-.seccion__separador {
-  display: flex; align-items: center; justify-content: center;
-  gap: .75rem; margin: .8rem auto 1.2rem;
+.seccion__sep {
+  display: flex; align-items: center; gap: .75rem;
+  margin: .8rem 0;
+  opacity: 0; transition: opacity .7s ease .3s;
 }
-.seccion__separador span { flex: 1; max-width: 100px; height: 1px; background: linear-gradient(90deg, transparent, rgba(45,142,142,.4), transparent); }
-.seccion__separador em { width: 5px; height: 5px; border-radius: 50%; background: var(--naranja); box-shadow: 0 0 8px var(--naranja); display: block; font-style: normal; }
+.seccion__sep span { width: 60px; height: 1px; background: linear-gradient(90deg, var(--teal-br), transparent); }
+.seccion__sep em { width: 5px; height: 5px; border-radius: 50%; background: var(--naranja); box-shadow: 0 0 8px var(--naranja); display: block; font-style: normal; }
 .seccion__slogan {
-  font-style: italic; font-size: clamp(.9rem,2.2vw,1.05rem);
-  color: var(--crema-dim); max-width: 520px; margin: 0 auto .6rem;
+  font-style: italic;
+  font-size: clamp(.88rem,2vw,1rem);
+  color: rgba(245,240,230,.6);
+  max-width: 500px;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .7s ease .4s, transform .7s ease .4s;
 }
 .seccion__poema {
-  font-style: italic; font-size: clamp(.82rem,1.9vw,.95rem);
-  color: rgba(245,240,230,.38); max-width: 480px;
-  margin: 0 auto; line-height: 1.65;
+  font-style: italic;
+  font-size: clamp(.78rem,1.8vw,.9rem);
+  color: rgba(245,240,230,.32);
+  max-width: 460px; line-height: 1.65;
+  margin-top: .4rem;
+  opacity: 0;
+  transition: opacity .6s ease .5s;
+}
+
+/* Estado visible — activado por IntersectionObserver */
+.seccion__intro.is-visible .seccion__num,
+.seccion__intro.is-visible .seccion__titulo,
+.seccion__intro.is-visible .seccion__subtitulo,
+.seccion__intro.is-visible .seccion__sep,
+.seccion__intro.is-visible .seccion__slogan,
+.seccion__intro.is-visible .seccion__poema {
+  opacity: 1; transform: translateY(0);
 }
 
 /* ════════════════════════════════════════════════════════
-   GRID DE PLATOS
+   LISTA TIPOGRÁFICA DE PLATOS — fine-dining style
 ════════════════════════════════════════════════════════ */
-.platos-grid {
+.menu-lista {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: clamp(2rem,5vw,3rem) clamp(1.5rem,5vw,2.5rem) clamp(3rem,7vw,5rem);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+.menu-item {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-  gap: clamp(.9rem,2.5vw,1.4rem);
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: clamp(1rem,4vw,2.5rem);
+  row-gap: .3rem;
+  padding: clamp(1rem,2.5vw,1.4rem) 0;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+  position: relative; cursor: default;
+  /* Animación de entrada */
+  opacity: 0; transform: translateX(-12px);
+  transition:
+    opacity .55s ease,
+    transform .55s ease,
+    padding-left .3s ease;
 }
+.menu-item:last-child { border-bottom: none; }
+.menu-item.is-visible { opacity: 1; transform: translateX(0); }
 
-.plato {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-bd);
-  border-radius: 14px;
-  overflow: hidden;
-  transition: transform .3s ease, border-color .3s, box-shadow .3s;
-  display: flex; flex-direction: column;
-  position: relative;
+/* Barra teal al hover */
+.menu-item::before {
+  content: ''; position: absolute;
+  left: 0; top: 50%; width: 2px; height: 0;
+  background: var(--teal-br);
+  transform: translateY(-50%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--teal-br);
+  transition: height .3s ease;
 }
-.plato:hover {
-  transform: translateY(-6px);
-  border-color: rgba(45,142,142,.35);
-  box-shadow: 0 12px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(45,142,142,.12);
-}
+.menu-item:hover::before { height: 60%; }
+.menu-item:hover { padding-left: clamp(.75rem,2vw,1.2rem); }
 
-/* Insignia especial */
-.plato__badge {
-  position: absolute; top: .6rem; right: .6rem;
-  background: var(--naranja); color: #1a0800;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: .6rem; font-weight: 800; letter-spacing: .08em;
-  padding: .2rem .55rem; border-radius: 20px;
-  z-index: 2;
-}
-
-/* Imagen / placeholder */
-.plato__img {
-  position: relative; aspect-ratio: 16/10; overflow: hidden;
-  background: linear-gradient(135deg, rgba(13,60,80,.8) 0%, rgba(4,15,28,.9) 100%);
-}
-.plato__img img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform .5s ease;
-}
-.plato:hover .plato__img img { transform: scale(1.06); }
-.plato__img-ph {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  opacity: .18;
-}
-.plato__img-ph svg { width: 52px; height: 52px; fill: var(--teal-br); }
-
-/* Información */
-.plato__body {
-  padding: clamp(.9rem,2.5vw,1.2rem);
-  display: flex; flex-direction: column; flex: 1; gap: .5rem;
-}
-.plato__nombre {
-  font-size: clamp(.95rem,2.2vw,1.08rem); font-weight: 700;
+/* Nombre */
+.menu-item__nombre {
+  grid-column: 1; grid-row: 1;
+  font-family: Georgia, serif;
+  font-size: clamp(1rem,2.3vw,1.12rem); font-weight: 700;
   color: var(--blanco); line-height: 1.3;
+  transition: color .25s;
 }
-.plato__desc {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: clamp(.75rem,1.8vw,.84rem); color: var(--crema-dim);
-  line-height: 1.55; flex: 1;
-}
-.plato__footer {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: .4rem; padding-top: .7rem;
-  border-top: 1px solid rgba(255,255,255,.06);
-}
-.plato__precio {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+.menu-item:hover .menu-item__nombre { color: #fff; }
+
+/* Precio */
+.menu-item__precio {
+  grid-column: 2; grid-row: 1;
+  font-family: -apple-system, sans-serif;
   font-size: clamp(.95rem,2.2vw,1.05rem); font-weight: 800;
   color: var(--naranja);
-  text-shadow: 0 0 14px rgba(255,148,1,.4);
+  text-shadow: 0 0 16px rgba(255,148,1,.3);
+  white-space: nowrap; align-self: start;
+  padding-top: .12em;
 }
-.plato__ico {
-  width: 20px; height: 20px; opacity: .3;
-  fill: var(--teal-br);
+
+/* Descripción */
+.menu-item__desc {
+  grid-column: 1 / -1; grid-row: 2;
+  font-family: -apple-system, sans-serif;
+  font-size: clamp(.76rem,1.8vw,.86rem);
+  color: var(--crema-off); line-height: 1.55;
+}
+
+/* Badge especial */
+.menu-item__badge {
+  display: inline-block; vertical-align: middle; margin-left: .5rem;
+  background: var(--naranja); color: #1a0800;
+  font-family: -apple-system, sans-serif;
+  font-size: .58rem; font-weight: 800; letter-spacing: .08em;
+  padding: .15rem .45rem; border-radius: 10px;
+}
+
+/* Puntos decorativos entre nombre y precio (desktop) */
+@media (min-width: 600px) {
+  .menu-item__nombre::after {
+    content: '';
+    display: inline-block;
+    width: 100%;
+    max-width: 0; /* controlled by grid */
+  }
 }
 
 /* ════════════════════════════════════════════════════════
-   SECCIÓN VICHES — tabla especial
+   SECCIÓN VICHES — especial
 ════════════════════════════════════════════════════════ */
 .viches-wrap {
+  max-width: 800px; margin: 0 auto;
+  padding: clamp(2rem,5vw,3rem) clamp(1.5rem,5vw,2.5rem) clamp(3rem,7vw,5rem);
   display: flex; flex-direction: column; gap: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,.04);
 }
 .viche-marca {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-bd);
-  border-radius: 14px; overflow: hidden;
+  background: var(--glass-bg); border: 1px solid var(--glass-bd);
+  border-radius: 12px; overflow: hidden;
+  opacity: 0; transition: opacity .6s ease, transform .6s ease;
+  transform: translateY(16px);
 }
+.viche-marca.is-visible { opacity: 1; transform: translateY(0); }
 .viche-marca__head {
-  padding: .75rem 1.2rem;
+  padding: .7rem 1.2rem;
   background: rgba(45,142,142,.10);
   border-bottom: 1px solid rgba(45,142,142,.15);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 700; font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+  font-family: -apple-system, sans-serif;
+  font-weight: 700; font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
   color: var(--teal-mk);
 }
 .viche-items { display: flex; flex-direction: column; }
@@ -445,71 +532,28 @@ main { position: relative; z-index: 10; }
   border-bottom: 1px solid rgba(255,255,255,.04);
 }
 .viche-item:last-child { border-bottom: none; }
-.viche-item__nombre {
-  font-size: clamp(.88rem,2vw,.98rem); font-weight: 600;
-  color: var(--blanco); flex: 1;
-}
+.viche-item__nombre { font-size: clamp(.88rem,2vw,.98rem); font-weight: 600; color: var(--blanco); flex: 1; }
 .viche-item__formato {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-  color: rgba(245,240,230,.35);
-  background: rgba(255,255,255,.06); border-radius: 10px;
-  padding: .15rem .45rem;
+  font-family: -apple-system, sans-serif;
+  font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(245,240,230,.32); background: rgba(255,255,255,.06);
+  border-radius: 10px; padding: .15rem .45rem;
 }
 .viche-item__precio {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 800; font-size: .95rem;
-  color: var(--naranja); white-space: nowrap;
+  font-family: -apple-system, sans-serif;
+  font-weight: 800; font-size: .95rem; color: var(--naranja); white-space: nowrap;
 }
-
-/* Cata especial */
 .viche-cata {
-  background: linear-gradient(135deg, rgba(255,148,1,.08) 0%, rgba(45,142,142,.08) 100%);
+  background: linear-gradient(135deg, rgba(255,148,1,.08), rgba(45,142,142,.08));
   border: 1px solid rgba(255,148,1,.2);
-  border-radius: 14px; padding: 1.5rem;
-  text-align: center; margin-top: .5rem;
+  border-radius: 12px; padding: 1.5rem; text-align: center;
+  opacity: 0; transition: opacity .6s ease .3s, transform .6s ease .3s;
+  transform: translateY(16px);
 }
-.viche-cata__titulo {
-  font-size: clamp(1.1rem,2.8vw,1.4rem); font-weight: 700; color: var(--blanco);
-  margin-bottom: .3rem;
-}
-.viche-cata__slogan {
-  font-style: italic; color: var(--crema-dim); font-size: .92rem;
-  margin-bottom: .8rem;
-}
-.viche-cata__precio {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 1.4rem; font-weight: 900; color: var(--naranja);
-  text-shadow: 0 0 18px rgba(255,148,1,.4);
-}
-
-/* ════════════════════════════════════════════════════════
-   PROFUNDÓMETRO — indicador lateral
-════════════════════════════════════════════════════════ */
-.profundometro {
-  position: fixed; right: clamp(.6rem,2vw,1.2rem); top: 50%;
-  transform: translateY(-50%);
-  z-index: 50; display: flex; flex-direction: column;
-  align-items: center; gap: 4px;
-}
-.prof-track {
-  width: 2px; height: 120px;
-  background: rgba(255,255,255,.08);
-  border-radius: 2px; position: relative; overflow: hidden;
-}
-.prof-fill {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, var(--teal-br), rgba(45,142,142,.3));
-  border-radius: 2px;
-  height: calc(var(--depth) * 100%);
-  transition: height .1s;
-}
-.prof-label {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(255,255,255,.2);
-  writing-mode: vertical-rl;
-}
+.viche-cata.is-visible { opacity: 1; transform: translateY(0); }
+.viche-cata__titulo { font-size: clamp(1.1rem,2.8vw,1.4rem); font-weight: 700; color: var(--blanco); margin-bottom: .3rem; }
+.viche-cata__slogan { font-style: italic; color: var(--crema-dim); font-size: .92rem; margin-bottom: .8rem; }
+.viche-cata__precio { font-family: -apple-system, sans-serif; font-size: 1.4rem; font-weight: 900; color: var(--naranja); text-shadow: 0 0 18px rgba(255,148,1,.4); }
 
 /* ════════════════════════════════════════════════════════
    FOOTER
@@ -517,29 +561,26 @@ main { position: relative; z-index: 10; }
 .footer {
   position: relative; z-index: 10;
   padding: clamp(3rem,8vw,5rem) clamp(1.5rem,5vw,3rem) clamp(2rem,5vw,3rem);
-  background: linear-gradient(to bottom, transparent, rgba(1,3,7,.95));
-  border-top: 1px solid rgba(45,142,142,.12);
+  background: linear-gradient(to bottom, transparent, rgba(1,3,7,.96));
+  border-top: 1px solid rgba(45,142,142,.10);
   text-align: center;
 }
-.footer__logo { width: 80px; height: auto; margin: 0 auto 1.2rem; opacity: .7; }
+.footer__logo { width: 80px; height: auto; margin: 0 auto 1.2rem; opacity: .65; }
 .footer__tagline {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, sans-serif;
   font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
   color: var(--teal-mk); margin-bottom: 1.5rem;
 }
 .footer__info {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, sans-serif;
   font-size: clamp(.75rem,1.8vw,.85rem); color: var(--crema-dim);
-  line-height: 1.7; margin-bottom: 1.2rem;
+  line-height: 1.8; margin-bottom: 1.2rem;
 }
-.footer__redes {
-  display: flex; justify-content: center; gap: 1rem;
-  flex-wrap: wrap; margin-bottom: 2rem;
-}
+.footer__redes { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
 .footer__red {
   display: inline-flex; align-items: center; gap: .4rem;
   padding: .45rem 1rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, sans-serif;
   font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   color: var(--crema-dim); text-decoration: none;
   border: 1px solid rgba(45,142,142,.3); border-radius: 2px;
@@ -548,8 +589,8 @@ main { position: relative; z-index: 10; }
 .footer__red:hover { color: var(--teal-mk); border-color: rgba(45,142,142,.6); }
 .footer__red svg { width: 13px; height: 13px; fill: currentColor; }
 .footer__legal {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: clamp(.6rem,1.4vw,.7rem); color: rgba(245,240,230,.2);
+  font-family: -apple-system, sans-serif;
+  font-size: clamp(.58rem,1.3vw,.68rem); color: rgba(245,240,230,.18);
   line-height: 1.65; max-width: 680px; margin: 0 auto;
 }
 
@@ -557,37 +598,30 @@ main { position: relative; z-index: 10; }
    ANIMACIONES GENERALES
 ════════════════════════════════════════════════════════ */
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-@keyframes float-sec { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 @keyframes subir { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
 @keyframes aparecer { from { opacity:0; } to { opacity:1; } }
-
-/* Entrada animada de platos al aparecer en pantalla */
-.plato { opacity: 0; transform: translateY(24px); transition: opacity .55s ease, transform .55s ease, box-shadow .3s, border-color .3s; }
-.plato.is-visible { opacity: 1; transform: translateY(0); }
-
-/* Entrada de cabeceras de sección */
-.seccion__head { opacity: 0; transition: opacity .7s ease, transform .7s ease; }
-.seccion__head.is-visible { opacity: 1; }
 
 /* ════════════════════════════════════════════════════════
    RESPONSIVE
 ════════════════════════════════════════════════════════ */
-@media (max-width: 500px) {
-  .profundometro { display: none; }
-}
+@media (max-width: 500px) { .profundometro { display: none; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .blob, .burbuja, .hero__logo, .seccion__head { animation: none !important; }
-  .plato { opacity: 1 !important; transform: none !important; }
-  .seccion__head { opacity: 1 !important; }
+  .blob, .burbuja { animation: none !important; }
+  .liquid::before { animation: none !important; }
+  .seccion__num, .seccion__titulo, .seccion__subtitulo,
+  .seccion__sep, .seccion__slogan, .seccion__poema,
+  .menu-item, .viche-marca, .viche-cata {
+    opacity: 1 !important; transform: none !important;
+  }
 }
   </style>
 </head>
 <body>
 
-<!-- ═══ PRELOADER ═══ -->
+<!-- PRELOADER -->
 <div class="preloader" id="preloader" aria-hidden="true">
-  <div class="preloader__logo">
-    <svg class="logo-svg" aria-label="Rey Guerrero" role="img" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256.44 232.46">
+  <div class="preloader__logo"><svg class="logo-svg" aria-label="Rey Guerrero" role="img" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256.44 232.46">
   <g>
     <path d="M110,115.46c-1.15-.43-2.07-1.34-2.5-2.49-.53-1.43-.8-3.22.99-3.55,3.07-.58,10.56,6.28,9.26,7-1.17.65-3.09.79-7.76-.95"/>
     <path d="M146.44,115.46c1.15-.43,2.07-1.34,2.5-2.49.53-1.43.8-3.22-.99-3.55-3.07-.58-10.56,6.28-9.26,7,1.17.65,3.09.79,7.76-.95"/>
@@ -675,21 +709,19 @@ main { position: relative; z-index: 10; }
     <path d="M63.34,35.35c0-1.76,1.44-3.2,3.2-3.2s3.2,1.44,3.2,3.2c0,1.76-1.44,3.2-3.2,3.2s-3.2-1.44-3.2-3.2ZM64.51,35.35c0,1.12.91,2.03,2.03,2.03s2.03-.91,2.03-2.03c0-1.12-.91-2.03-2.03-2.03s-2.03.91-2.03,2.03Z"/>
     <path d="M56.51,33.93c0-1.76,1.44-3.2,3.2-3.2s3.2,1.44,3.2,3.2c0,1.76-1.44,3.2-3.2,3.2-1.76,0-3.2-1.44-3.2-3.2ZM57.68,33.93c0,1.12.91,2.03,2.03,2.03s2.03-.91,2.03-2.03c0-1.12-.91-2.03-2.03-2.03s-2.03.91-2.03,2.03Z"/>
   </g>
-</svg>
-  </div>
+</svg></div>
   <div class="preloader__wave"></div>
 </div>
 
-<!-- ═══ FONDO LÍQUIDO ═══ -->
+<!-- FONDO LÍQUIDO -->
 <div class="liquid" aria-hidden="true">
   <div class="blob"></div>
   <div class="blob"></div>
   <div class="blob"></div>
 </div>
 
-<!-- Textura de agua SVG -->
-<svg class="agua-sup" viewBox="0 0 900 900"
-     preserveAspectRatio="xMidYMid slice"
+<!-- Textura agua SVG -->
+<svg class="agua-sup" viewBox="0 0 900 900" preserveAspectRatio="xMidYMid slice"
      aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
   <filter id="texAgua" x="0" y="0" width="100%" height="100%"
           color-interpolation-filters="sRGB">
@@ -712,10 +744,10 @@ main { position: relative; z-index: 10; }
 <!-- Profundómetro -->
 <div class="profundometro" aria-hidden="true">
   <span class="prof-label">Profundidad</span>
-  <div class="prof-track"><div class="prof-fill" id="profFill"></div></div>
+  <div class="prof-track"><div class="prof-fill"></div></div>
 </div>
 
-<!-- ═══ NAV ═══ -->
+<!-- NAV -->
 <nav class="nav" role="navigation" aria-label="Secciones del menú">
   <div class="nav__inner">
     <a href="#inicio" class="nav__brand" aria-label="Inicio">
@@ -725,20 +757,16 @@ main { position: relative; z-index: 10; }
     <div class="nav__tabs" role="list">
       <?php foreach ($menu as $key => $sec): ?>
       <a href="#<?php echo htmlspecialchars($sec['id']); ?>"
-         class="nav__tab"
-         data-sec="<?php echo htmlspecialchars($sec['id']); ?>"
-         role="listitem">
-        <?php echo htmlspecialchars($sec['title']); ?>
-      </a>
+         class="nav__tab" data-sec="<?php echo htmlspecialchars($sec['id']); ?>"
+         role="listitem"><?php echo htmlspecialchars($sec['title']); ?></a>
       <?php endforeach; ?>
     </div>
   </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
+<!-- HERO -->
 <section class="hero" id="inicio">
-  <div class="hero__logo" aria-hidden="true">
-    <svg class="logo-svg" aria-label="Rey Guerrero" role="img" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256.44 232.46">
+  <div class="hero__logo" aria-hidden="true"><svg class="logo-svg" aria-label="Rey Guerrero" role="img" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256.44 232.46">
   <g>
     <path d="M110,115.46c-1.15-.43-2.07-1.34-2.5-2.49-.53-1.43-.8-3.22.99-3.55,3.07-.58,10.56,6.28,9.26,7-1.17.65-3.09.79-7.76-.95"/>
     <path d="M146.44,115.46c1.15-.43,2.07-1.34,2.5-2.49.53-1.43.8-3.22-.99-3.55-3.07-.58-10.56,6.28-9.26,7,1.17.65,3.09.79,7.76-.95"/>
@@ -826,12 +854,10 @@ main { position: relative; z-index: 10; }
     <path d="M63.34,35.35c0-1.76,1.44-3.2,3.2-3.2s3.2,1.44,3.2,3.2c0,1.76-1.44,3.2-3.2,3.2s-3.2-1.44-3.2-3.2ZM64.51,35.35c0,1.12.91,2.03,2.03,2.03s2.03-.91,2.03-2.03c0-1.12-.91-2.03-2.03-2.03s-2.03.91-2.03,2.03Z"/>
     <path d="M56.51,33.93c0-1.76,1.44-3.2,3.2-3.2s3.2,1.44,3.2,3.2c0,1.76-1.44,3.2-3.2,3.2-1.76,0-3.2-1.44-3.2-3.2ZM57.68,33.93c0,1.12.91,2.03,2.03,2.03s2.03-.91,2.03-2.03c0-1.12-.91-2.03-2.03-2.03s-2.03.91-2.03,2.03Z"/>
   </g>
-</svg>
-  </div>
+</svg></div>
   <p class="hero__tagline">Sabor Pacífico &mdash; Cali, Colombia</p>
   <h1 class="hero__title">
-    Rey Guerrero<br>
-    <em>Menú Digital</em>
+    Rey Guerrero<br><em>Menú Digital</em>
   </h1>
   <p class="hero__desc">
     Alta cocina del Pacífico colombiano.<br>
@@ -843,32 +869,42 @@ main { position: relative; z-index: 10; }
   </div>
 </section>
 
-<!-- ═══ MENÚ ═══ -->
+<!-- MENÚ -->
 <main id="menu-contenido">
-
-<?php
-// SVG placeholder fish icon
-$fishSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M48 32c0-8-6-15-14-17.3V10l-8 6 8 6v-4.2C40.6 19.7 46 25.4 46 32s-5.4 12.3-12 14.2V42l-8 6 8 6v-4.7C42 47 48 40 48 32zM16 22l-8-8v6C4 22 0 26.7 0 32s4 10 8 12v6l8-8-8-8v4.3C5.3 36.5 2 34.4 2 32s3.3-4.5 6-6.3V30l8-8z"/></svg>';
-
-foreach ($menu as $secKey => $sec):
+<?php foreach ($menu as $secKey => $sec):
+  $g = $sectionGradients[$sec['id']] ?? ['7,40,55','3,20,30'];
   $isViches = isset($sec['has_subsections']) && $sec['has_subsections'];
 ?>
 <section class="seccion" id="<?php echo htmlspecialchars($sec['id']); ?>">
-  <header class="seccion__head">
-    <div class="seccion__num"><?php echo htmlspecialchars($sec['number']); ?></div>
-    <h2 class="seccion__titulo"><?php echo htmlspecialchars($sec['title']); ?></h2>
-    <p class="seccion__subtitulo"><?php echo htmlspecialchars($sec['subtitle']); ?></p>
-    <div class="seccion__separador"><span></span><em></em><span></span></div>
-    <p class="seccion__slogan"><?php echo htmlspecialchars($sec['slogan']); ?></p>
-    <?php if (!empty($sec['poem'])): ?>
-    <p class="seccion__poema"><?php echo $sec['poem']; ?></p>
-    <?php endif; ?>
-  </header>
 
+  <!-- ── Intro con foto protagonista ── -->
+  <div class="seccion__intro" data-parallax="true">
+    <!-- Gradiente placeholder (desaparece cuando carga la foto) -->
+    <div class="seccion__foto-ph"
+         style="--ph-1:<?php echo $g[0]; ?>;--ph-2:<?php echo $g[1]; ?>"></div>
+    <!-- Foto real de la sección -->
+    <img class="seccion__foto"
+         src="assets/images/sections/<?php echo htmlspecialchars($sec['id']); ?>.jpg"
+         alt="<?php echo htmlspecialchars($sec['title']); ?>"
+         loading="lazy"
+         onerror="this.style.display='none'"/>
+    <div class="seccion__overlay"></div>
+    <div class="seccion__intro-body">
+      <span class="seccion__num"><?php echo htmlspecialchars($sec['number']); ?></span>
+      <h2 class="seccion__titulo"><?php echo htmlspecialchars($sec['title']); ?></h2>
+      <p class="seccion__subtitulo"><?php echo htmlspecialchars($sec['subtitle']); ?></p>
+      <div class="seccion__sep"><span></span><em></em></div>
+      <p class="seccion__slogan"><?php echo htmlspecialchars($sec['slogan']); ?></p>
+      <?php if (!empty($sec['poem'])): ?>
+      <p class="seccion__poema"><?php echo $sec['poem']; ?></p>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <!-- ── Platos ── -->
   <?php if ($isViches): ?>
-  <!-- Sección Viches — con sub-marcas -->
   <div class="viches-wrap">
-    <?php foreach ($sec['subsections'] as $brandKey => $brand): ?>
+    <?php foreach ($sec['subsections'] as $brand): ?>
     <div class="viche-marca">
       <div class="viche-marca__head"><?php echo htmlspecialchars($brand['name']); ?></div>
       <div class="viche-items">
@@ -876,89 +912,66 @@ foreach ($menu as $secKey => $sec):
         <div class="viche-item">
           <span class="viche-item__nombre"><?php echo htmlspecialchars($item['name']); ?></span>
           <span class="viche-item__formato"><?php echo htmlspecialchars($item['format']); ?></span>
-          <span class="viche-item__precio">$ <?php echo number_format($item['price'], 0, '.', ','); ?></span>
+          <span class="viche-item__precio">$ <?php echo number_format($item['price'],0,'.',','); ?></span>
         </div>
         <?php endforeach; ?>
       </div>
     </div>
     <?php endforeach; ?>
-
     <?php if (!empty($sec['special_item'])): $si = $sec['special_item']; ?>
     <div class="viche-cata">
       <div class="viche-cata__titulo"><?php echo htmlspecialchars($si['name']); ?></div>
       <div class="viche-cata__slogan"><?php echo htmlspecialchars($si['slogan']); ?></div>
-      <div class="viche-cata__precio">$ <?php echo number_format($si['price'], 0, '.', ','); ?></div>
+      <div class="viche-cata__precio">$ <?php echo number_format($si['price'],0,'.',','); ?></div>
     </div>
     <?php endif; ?>
   </div>
 
   <?php else: ?>
-  <!-- Sección normal — grid de platos -->
-  <div class="platos-grid">
+  <div class="menu-lista">
     <?php foreach ($sec['dishes'] as $dish): ?>
-    <article class="plato">
-      <?php if (!empty($dish['special'])): ?>
-      <span class="plato__badge"><?php echo htmlspecialchars($dish['special']); ?></span>
-      <?php endif; ?>
-      <div class="plato__img">
-        <img src="<?php echo htmlspecialchars($dish['image'] ?? 'assets/images/placeholder-dish.svg'); ?>"
-             alt="<?php echo htmlspecialchars($dish['name']); ?>"
-             loading="lazy"
-             onerror="this.style.opacity=0">
-        <div class="plato__img-ph">
-          <?php echo $fishSvg; ?>
-        </div>
-      </div>
-      <div class="plato__body">
-        <h3 class="plato__nombre"><?php echo htmlspecialchars($dish['name']); ?></h3>
-        <p class="plato__desc"><?php echo htmlspecialchars($dish['description']); ?></p>
-        <div class="plato__footer">
-          <span class="plato__precio">
-            $ <?php echo number_format($dish['price'], 0, '.', ','); ?>
-          </span>
-          <svg class="plato__ico" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M48 32c0-8-6-15-14-17.3V10l-8 6 8 6v-4.2C40.6 19.7 46 25.4 46 32s-5.4 12.3-12 14.2V42l-8 6 8 6v-4.7C42 47 48 40 48 32zM16 22l-8-8v6C4 22 0 26.7 0 32s4 10 8 12v6l8-8-8-8v4.3C5.3 36.5 2 34.4 2 32s3.3-4.5 6-6.3V30l8-8z"/>
-          </svg>
-        </div>
-      </div>
-    </article>
+    <div class="menu-item">
+      <span class="menu-item__nombre">
+        <?php echo htmlspecialchars($dish['name']); ?>
+        <?php if (!empty($dish['special'])): ?>
+        <span class="menu-item__badge"><?php echo htmlspecialchars($dish['special']); ?></span>
+        <?php endif; ?>
+      </span>
+      <span class="menu-item__precio">$ <?php echo number_format($dish['price'],0,'.',','); ?></span>
+      <p class="menu-item__desc"><?php echo htmlspecialchars($dish['description']); ?></p>
+    </div>
     <?php endforeach; ?>
   </div>
   <?php endif; ?>
+
 </section>
 <?php endforeach; ?>
-
 </main>
 
-<!-- ═══ FOOTER ═══ -->
+<!-- FOOTER -->
 <footer class="footer">
-  <img class="footer__logo"
-       src="assets/images/logo-rey-guerrero.svg"
-       alt="Rey Guerrero" loading="lazy"/>
+  <img class="footer__logo" src="assets/images/logo-rey-guerrero.svg" alt="Rey Guerrero" loading="lazy"/>
   <p class="footer__tagline">Sabor Pacífico &mdash; Cali, Colombia</p>
-
   <div class="footer__info">
     <?php echo htmlspecialchars($rest['address']); ?><br>
     <strong>Tel.</strong> <?php echo htmlspecialchars($rest['phone']); ?>
     &nbsp;&bull;&nbsp;
     <?php foreach ($rest['hours'] as $day => $hours): ?>
-      <?php echo htmlspecialchars($day); ?>: <?php echo htmlspecialchars($hours); ?> &nbsp;
+      <?php echo htmlspecialchars($day); ?>: <?php echo htmlspecialchars($hours); ?>&nbsp;
     <?php endforeach; ?>
   </div>
-
   <div class="footer__redes">
     <a href="https://www.instagram.com/<?php echo htmlspecialchars($rest['social']['instagram']); ?>"
        class="footer__red" target="_blank" rel="noopener noreferrer">
       <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
       @<?php echo htmlspecialchars($rest['social']['instagram']); ?>
     </a>
-    <a href="https://wa.me/57<?php echo preg_replace('/\D/', '', $rest['phone']); ?>"
+    <a href="https://wa.me/57<?php echo preg_replace('/\D/','',$rest['phone']); ?>"
        class="footer__red" target="_blank" rel="noopener noreferrer">
       <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp
     </a>
   </div>
-
   <div class="footer__legal">
     <?php echo htmlspecialchars($rest['legal']['tax_note']); ?><br>
     <?php echo htmlspecialchars($rest['legal']['tip_warning']); ?><br><br>
@@ -967,119 +980,132 @@ foreach ($menu as $secKey => $sec):
 </footer>
 
 <script>
-/* ════════ PROFUNDIDAD + PAUSA DE BLOBS ════════ */
-(function() {
+/* ═══ PROFUNDIDAD + PAUSA BLOBS ═══ */
+(function(){
   var root = document.documentElement;
   var liquid = document.querySelector('.liquid');
   var aguaSup = document.querySelector('.agua-sup');
   var blobs = document.querySelectorAll('.blob');
   var ticking = false;
 
-  /* Actualiza --depth al hacer scroll */
-  function setDepth() {
+  function setDepth(){
     var total = document.body.scrollHeight - window.innerHeight;
-    var ratio = total > 0 ? Math.min(window.scrollY / total, 1) : 0;
-    root.style.setProperty('--depth', ratio.toFixed(4));
+    root.style.setProperty('--depth', total > 0 ? Math.min(window.scrollY/total,1).toFixed(4) : '0');
     ticking = false;
   }
-  window.addEventListener('scroll', function() {
-    if (!ticking) { requestAnimationFrame(setDepth); ticking = true; }
-  }, { passive: true });
+  window.addEventListener('scroll', function(){
+    if(!ticking){ requestAnimationFrame(setDepth); ticking=true; }
+  }, {passive:true});
   setDepth();
 
-  /* Pausa los blobs cuando el hero sale del viewport.
-     El fondo sigue cambiando de color (via --depth, puro CSS),
-     pero la GPU ya no está renderizando blur costoso. */
-  var heroObs = new IntersectionObserver(function(entries) {
-    var heroVisible = entries[0].isIntersecting;
-    if (heroVisible) {
-      liquid.classList.remove('is-paused');
-      blobs.forEach(function(b) { b.style.animationPlayState = 'running'; });
-      if (aguaSup) aguaSup.style.opacity = '';
-    } else {
-      liquid.classList.add('is-paused');
-      blobs.forEach(function(b) { b.style.animationPlayState = 'paused'; });
-      if (aguaSup) aguaSup.style.opacity = '0';
-    }
-  }, { threshold: 0.05 });
-
+  var heroObs = new IntersectionObserver(function(entries){
+    var v = entries[0].isIntersecting;
+    liquid.classList.toggle('is-paused', !v);
+    blobs.forEach(function(b){ b.style.animationPlayState = v ? 'running' : 'paused'; });
+    if(aguaSup) aguaSup.style.opacity = v ? '' : '0';
+  }, {threshold: 0.05});
   var hero = document.getElementById('inicio');
-  if (hero) heroObs.observe(hero);
+  if(hero) heroObs.observe(hero);
 })();
 
-/* ════════ NAV — active state con IntersectionObserver ════════ */
-(function() {
+/* ═══ NAV ACTIVE ═══ */
+(function(){
   var tabs = document.querySelectorAll('.nav__tab');
   var tabMap = {};
-  tabs.forEach(function(t) { tabMap[t.dataset.sec] = t; });
+  tabs.forEach(function(t){ tabMap[t.dataset.sec] = t; });
 
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) {
-        tabs.forEach(function(t) { t.classList.remove('is-active'); });
-        var t = tabMap[e.target.id];
-        if (t) {
-          t.classList.add('is-active');
-          t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        tabs.forEach(function(t){ t.classList.remove('is-active'); });
+        var t = tabMap[e.target.closest('section').id];
+        if(t){ t.classList.add('is-active'); t.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); }
       }
     });
-  }, { threshold: 0.25 });
+  }, {threshold: 0.3}).observe;
 
-  document.querySelectorAll('section[id]').forEach(function(s) {
-    if (s.id !== 'inicio') observer.observe(s);
+  // Observe section intros
+  document.querySelectorAll('.seccion__intro').forEach(function(intro){
+    new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){
+        tabs.forEach(function(t){ t.classList.remove('is-active'); });
+        var t = tabMap[intro.closest('section').id];
+        if(t){ t.classList.add('is-active'); t.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); }
+      }
+    }, {threshold:0.3}).observe(intro);
   });
 })();
 
-/* ════════ PLATOS — aparecen al hacer scroll ════════ */
-(function() {
-  var items = document.querySelectorAll('.plato, .seccion__head, .viche-marca, .viche-cata');
-  var obs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) {
+/* ═══ ANIMACIONES DE ENTRADA (intro + platos) ═══ */
+(function(){
+  // Section intros
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, {threshold: 0.15}).observe;
+
+  document.querySelectorAll('.seccion__intro').forEach(function(el){
+    new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting) entries[0].target.classList.add('is-visible');
+    }, {threshold: 0.15}).observe(el);
+  });
+
+  // Items de menú — stagger por posición
+  var itemObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
         e.target.classList.add('is-visible');
-        obs.unobserve(e.target);
+        itemObs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.12 });
-  items.forEach(function(el, i) {
-    el.style.transitionDelay = (i % 4) * 0.07 + 's';
-    obs.observe(el);
+  }, {threshold: 0.08});
+
+  document.querySelectorAll('.menu-item, .viche-marca, .viche-cata').forEach(function(el, i){
+    el.style.transitionDelay = (i % 6) * 0.06 + 's';
+    itemObs.observe(el);
   });
 })();
 
-/* ════════ BURBUJAS ════════ */
-(function() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+/* ═══ PARALLAX FOTO DE SECCIÓN ═══ */
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var heroes = document.querySelectorAll('.seccion__intro[data-parallax]');
+  function applyParallax(){
+    heroes.forEach(function(hero){
+      var rect = hero.getBoundingClientRect();
+      if(rect.bottom < 0 || rect.top > window.innerHeight) return;
+      var img = hero.querySelector('.seccion__foto');
+      if(!img || img.style.display === 'none') return;
+      var progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+      var offset = (progress - 0.5) * 40;
+      img.style.transform = 'translateY(' + offset + 'px) scale(1.08)';
+    });
+  }
+  window.addEventListener('scroll', applyParallax, {passive:true});
+  applyParallax();
+})();
+
+/* ═══ BURBUJAS ═══ */
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var cont = document.getElementById('burbujas');
-  for (var i = 0; i < 28; i++) {
-    var el = document.createElement('div');
-    el.className = 'burbuja';
-    var s  = (Math.random() * 10 + 2).toFixed(1);
-    var x  = (Math.random() * 96 + 2).toFixed(1);
-    var y  = (Math.random() * 80 + 15).toFixed(1);
-    var d  = (14 + Math.random() * 22).toFixed(1);
-    var dl = (Math.random() * -d).toFixed(1);
-    var dx = ((Math.random() - .5) * 60).toFixed(0);
-    var op = (.07 + Math.random() * .18).toFixed(2);
-    el.style.cssText =
-      'width:' + s + 'px;height:' + s + 'px;' +
-      'left:' + x + '%;top:' + y + '%;' +
-      '--dx:' + dx + 'px;--op:' + op + ';' +
-      'animation-duration:' + d + 's;' +
-      'animation-delay:' + dl + 's';
+  for(var i=0; i<28; i++){
+    var el = document.createElement('div'); el.className = 'burbuja';
+    var s=(Math.random()*10+2).toFixed(1), x=(Math.random()*96+2).toFixed(1);
+    var y=(Math.random()*80+15).toFixed(1), d=(14+Math.random()*22).toFixed(1);
+    var dl=(Math.random()*-d).toFixed(1), dx=((Math.random()-.5)*60).toFixed(0);
+    var op=(.07+Math.random()*.18).toFixed(2);
+    el.style.cssText='width:'+s+'px;height:'+s+'px;left:'+x+'%;top:'+y+'%;--dx:'+dx+'px;--op:'+op+';animation-duration:'+d+'s;animation-delay:'+dl+'s';
     cont.appendChild(el);
   }
 })();
 
-/* ════════ PRELOADER ════════ */
-(function() {
+/* ═══ PRELOADER ═══ */
+(function(){
   var pl = document.getElementById('preloader');
-  function hidePl() { pl.classList.add('is-gone'); }
-  if (document.readyState === 'complete') { setTimeout(hidePl, 300); }
-  else { window.addEventListener('load', function() { setTimeout(hidePl, 400); }); }
+  function hide(){ pl.classList.add('is-gone'); }
+  if(document.readyState==='complete') setTimeout(hide,300);
+  else window.addEventListener('load', function(){ setTimeout(hide,400); });
 })();
 </script>
-
 </body>
 </html>
