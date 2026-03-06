@@ -69,11 +69,8 @@ body {
   font-family: Georgia, 'Times New Roman', serif;
   color: var(--crema);
   overflow-x: hidden;
-  background-color: hsl(
-    calc((var(--surface-h) - var(--depth) * 30) * 1deg),
-    calc((var(--surface-s) - var(--depth) * 76) * 1%),
-    calc((var(--surface-l) - var(--depth) * 15) * 1%)
-  );
+  /* Sólido siempre visible — JS actualiza al hacer scroll */
+  background-color: #060E18;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -358,14 +355,12 @@ main { position: relative; z-index: 10; }
   -webkit-text-stroke: 1px rgba(45,155,155,.2);
   letter-spacing: -.04em; user-select: none;
   margin-bottom: -.15em;
-  /* empieza fuera, entra al hacer scroll */
-  opacity: 0; transform: translateY(30px);
+  /* empieza fuera cuando JS está activo — ver .anim-ready */
   transition: opacity .9s ease, transform .9s ease;
 }
 .seccion__titulo {
   font-size: clamp(2.2rem,6vw,4.5rem); font-weight: 700; line-height: 1.08;
   color: var(--blanco); letter-spacing: -.015em;
-  opacity: 0; transform: translateY(20px);
   transition: opacity .8s ease .1s, transform .8s ease .1s;
 }
 .seccion__subtitulo {
@@ -373,41 +368,40 @@ main { position: relative; z-index: 10; }
   font-size: clamp(.75rem,1.8vw,.88rem); font-weight: 600;
   letter-spacing: .28em; text-transform: uppercase;
   color: var(--teal-mk); margin-top: .55rem;
-  opacity: 0; transform: translateY(16px);
   transition: opacity .75s ease .2s, transform .75s ease .2s;
 }
 .seccion__sep {
   display: flex; align-items: center; gap: .75rem;
   margin: .8rem 0;
-  opacity: 0; transition: opacity .7s ease .3s;
+  transition: opacity .7s ease .3s;
 }
 .seccion__sep span { width: 60px; height: 1px; background: linear-gradient(90deg, var(--teal-br), transparent); }
 .seccion__sep em { width: 5px; height: 5px; border-radius: 50%; background: var(--naranja); box-shadow: 0 0 8px var(--naranja); display: block; font-style: normal; }
 .seccion__slogan {
-  font-style: italic;
-  font-size: clamp(.88rem,2vw,1rem);
-  color: rgba(245,240,230,.6);
-  max-width: 500px;
-  opacity: 0; transform: translateY(12px);
+  font-style: italic; font-size: clamp(.88rem,2vw,1rem);
+  color: rgba(245,240,230,.6); max-width: 500px;
   transition: opacity .7s ease .4s, transform .7s ease .4s;
 }
 .seccion__poema {
-  font-style: italic;
-  font-size: clamp(.78rem,1.8vw,.9rem);
-  color: rgba(245,240,230,.32);
-  max-width: 460px; line-height: 1.65;
-  margin-top: .4rem;
-  opacity: 0;
-  transition: opacity .6s ease .5s;
+  font-style: italic; font-size: clamp(.78rem,1.8vw,.9rem);
+  color: rgba(245,240,230,.32); max-width: 460px; line-height: 1.65;
+  margin-top: .4rem; transition: opacity .6s ease .5s;
 }
 
-/* Estado visible — activado por IntersectionObserver */
-.seccion__intro.is-visible .seccion__num,
-.seccion__intro.is-visible .seccion__titulo,
-.seccion__intro.is-visible .seccion__subtitulo,
-.seccion__intro.is-visible .seccion__sep,
-.seccion__intro.is-visible .seccion__slogan,
-.seccion__intro.is-visible .seccion__poema {
+/* Animaciones — solo cuando JS confirma que está corriendo */
+.anim-ready .seccion__num { opacity: 0; transform: translateY(30px); }
+.anim-ready .seccion__titulo { opacity: 0; transform: translateY(20px); }
+.anim-ready .seccion__subtitulo { opacity: 0; transform: translateY(16px); }
+.anim-ready .seccion__sep { opacity: 0; }
+.anim-ready .seccion__slogan { opacity: 0; transform: translateY(12px); }
+.anim-ready .seccion__poema { opacity: 0; }
+
+.anim-ready .seccion__intro.is-visible .seccion__num,
+.anim-ready .seccion__intro.is-visible .seccion__titulo,
+.anim-ready .seccion__intro.is-visible .seccion__subtitulo,
+.anim-ready .seccion__intro.is-visible .seccion__sep,
+.anim-ready .seccion__intro.is-visible .seccion__slogan,
+.anim-ready .seccion__intro.is-visible .seccion__poema {
   opacity: 1; transform: translateY(0);
 }
 
@@ -430,15 +424,16 @@ main { position: relative; z-index: 10; }
   padding: clamp(1rem,2.5vw,1.4rem) 0;
   border-bottom: 1px solid rgba(255,255,255,.055);
   position: relative; cursor: default;
-  /* Animación de entrada */
-  opacity: 0; transform: translateX(-12px);
   transition:
     opacity .55s ease,
     transform .55s ease,
     padding-left .3s ease;
 }
 .menu-item:last-child { border-bottom: none; }
-.menu-item.is-visible { opacity: 1; transform: translateX(0); }
+
+/* Animaciones de entrada — solo con JS activo */
+.anim-ready .menu-item        { opacity: 0; transform: translateX(-12px); }
+.anim-ready .menu-item.is-visible { opacity: 1; transform: translateX(0); }
 
 /* Barra teal al hover */
 .menu-item::before {
@@ -513,10 +508,10 @@ main { position: relative; z-index: 10; }
 .viche-marca {
   background: var(--glass-bg); border: 1px solid var(--glass-bd);
   border-radius: 12px; overflow: hidden;
-  opacity: 0; transition: opacity .6s ease, transform .6s ease;
-  transform: translateY(16px);
+  transition: opacity .6s ease, transform .6s ease;
 }
-.viche-marca.is-visible { opacity: 1; transform: translateY(0); }
+.anim-ready .viche-marca { opacity: 0; transform: translateY(16px); }
+.anim-ready .viche-marca.is-visible { opacity: 1; transform: translateY(0); }
 .viche-marca__head {
   padding: .7rem 1.2rem;
   background: rgba(45,142,142,.10);
@@ -547,10 +542,10 @@ main { position: relative; z-index: 10; }
   background: linear-gradient(135deg, rgba(255,148,1,.08), rgba(45,142,142,.08));
   border: 1px solid rgba(255,148,1,.2);
   border-radius: 12px; padding: 1.5rem; text-align: center;
-  opacity: 0; transition: opacity .6s ease .3s, transform .6s ease .3s;
-  transform: translateY(16px);
+  transition: opacity .6s ease .3s, transform .6s ease .3s;
 }
-.viche-cata.is-visible { opacity: 1; transform: translateY(0); }
+.anim-ready .viche-cata { opacity: 0; transform: translateY(16px); }
+.anim-ready .viche-cata.is-visible { opacity: 1; transform: translateY(0); }
 .viche-cata__titulo { font-size: clamp(1.1rem,2.8vw,1.4rem); font-weight: 700; color: var(--blanco); margin-bottom: .3rem; }
 .viche-cata__slogan { font-style: italic; color: var(--crema-dim); font-size: .92rem; margin-bottom: .8rem; }
 .viche-cata__precio { font-family: -apple-system, sans-serif; font-size: 1.4rem; font-weight: 900; color: var(--naranja); text-shadow: 0 0 18px rgba(255,148,1,.4); }
@@ -988,9 +983,18 @@ main { position: relative; z-index: 10; }
   var blobs = document.querySelectorAll('.blob');
   var ticking = false;
 
+  /* Confirma que JS está corriendo — activa las animaciones CSS */
+  root.classList.add('anim-ready');
+
   function setDepth(){
     var total = document.body.scrollHeight - window.innerHeight;
-    root.style.setProperty('--depth', total > 0 ? Math.min(window.scrollY/total,1).toFixed(4) : '0');
+    var ratio = total > 0 ? Math.min(window.scrollY / total, 1) : 0;
+    root.style.setProperty('--depth', ratio.toFixed(4));
+    /* Actualiza color de fondo directamente — evita el hsl(calc()) frágil */
+    var h = Math.round(188 - ratio * 30);
+    var s = Math.round(80  - ratio * 76);
+    var l = Math.round(18  - ratio * 15);
+    document.body.style.backgroundColor = 'hsl(' + h + ',' + s + '%,' + l + '%)';
     ticking = false;
   }
   window.addEventListener('scroll', function(){
@@ -1014,16 +1018,6 @@ main { position: relative; z-index: 10; }
   var tabMap = {};
   tabs.forEach(function(t){ tabMap[t.dataset.sec] = t; });
 
-  new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        tabs.forEach(function(t){ t.classList.remove('is-active'); });
-        var t = tabMap[e.target.closest('section').id];
-        if(t){ t.classList.add('is-active'); t.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); }
-      }
-    });
-  }, {threshold: 0.3}).observe;
-
   // Observe section intros
   document.querySelectorAll('.seccion__intro').forEach(function(intro){
     new IntersectionObserver(function(entries){
@@ -1039,10 +1033,6 @@ main { position: relative; z-index: 10; }
 /* ═══ ANIMACIONES DE ENTRADA (intro + platos) ═══ */
 (function(){
   // Section intros
-  new IntersectionObserver(function(entries){
-    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('is-visible'); });
-  }, {threshold: 0.15}).observe;
-
   document.querySelectorAll('.seccion__intro').forEach(function(el){
     new IntersectionObserver(function(entries){
       if(entries[0].isIntersecting) entries[0].target.classList.add('is-visible');
