@@ -85,54 +85,60 @@ body {
   opacity: 0;
 }
 
+/* ── Gradiente cónico que rota despacio ──────────────────
+   Un solo transform:rotate() = compositor GPU puro, siempre fluido */
+.liquid::before {
+  content: '';
+  position: absolute;
+  width: 160%; height: 160%;
+  top: -30%; left: -30%;
+  background: conic-gradient(
+    from 0deg at 55% 45%,
+    #062535 0%, #0A3D52 22%,
+    #1B5E6E 38%, #0C4858 52%,
+    #082232 68%, #0A3040 84%,
+    #062535 100%
+  );
+  filter: blur(55px);
+  opacity: .75;
+  will-change: transform;
+  animation: giro-lento 90s linear infinite;
+}
+@keyframes giro-lento { to { transform: rotate(360deg); } }
+
+/* ── 3 blobs — solo translate, sin border-radius animado ─
+   border-radius estático = cero repaint, movimiento siempre suave */
 .blob {
   position: absolute;
-  will-change: transform, border-radius;
+  will-change: transform;
 }
 .blob:nth-child(1) {
-  width: 70vmax; height: 65vmax; top: -25%; left: -18%;
-  background: radial-gradient(ellipse at 45% 40%, #1B6E7A 0%, #0A2840 45%, transparent 72%);
-  filter: blur(88px); opacity: .38;
-  animation: drift1 28s ease-in-out infinite alternate, morph1 22s ease-in-out infinite alternate;
+  width: 80vmax; height: 70vmax; top: -20%; left: -15%;
+  border-radius: 62% 38% 46% 54% / 58% 44% 56% 42%;
+  background: radial-gradient(ellipse at 45% 40%, #1B6E7A 0%, #0A2840 55%, transparent 78%);
+  filter: blur(100px); opacity: .38;
+  animation: fluir1 52s cubic-bezier(0.37,0,0.63,1) infinite alternate;
 }
 .blob:nth-child(2) {
-  width: 60vmax; height: 55vmax; bottom: -22%; right: -14%;
-  background: radial-gradient(ellipse at 55% 55%, #2D8E8E 0%, #0D3840 45%, transparent 72%);
-  filter: blur(82px); opacity: .28;
-  animation: drift2 24s ease-in-out infinite alternate, morph2 19s ease-in-out infinite alternate;
-  animation-delay: -9s, -6s;
+  width: 65vmax; height: 60vmax; bottom: -25%; right: -18%;
+  border-radius: 38% 62% 54% 46% / 42% 56% 44% 58%;
+  background: radial-gradient(ellipse at 55% 55%, #2D8E8E 0%, #0D3840 50%, transparent 76%);
+  filter: blur(96px); opacity: .28;
+  animation: fluir2 44s cubic-bezier(0.37,0,0.63,1) infinite alternate;
+  animation-delay: -20s;
 }
 .blob:nth-child(3) {
-  width: 45vmax; height: 42vmax; top: 28%; left: 28%;
-  background: radial-gradient(ellipse at 50% 50%, #1a4e70 0%, #06172A 55%, transparent 78%);
-  filter: blur(72px); opacity: .26;
-  animation: drift3 32s ease-in-out infinite alternate, morph3 26s ease-in-out infinite alternate;
-  animation-delay: -14s, -18s;
+  width: 55vmax; height: 52vmax; top: 22%; left: 32%;
+  border-radius: 50% 50% 38% 62% / 45% 55% 45% 55%;
+  background: radial-gradient(ellipse at 50% 50%, #0E4560 0%, #061828 55%, transparent 78%);
+  filter: blur(88px); opacity: .24;
+  animation: fluir3 60s cubic-bezier(0.37,0,0.63,1) infinite alternate;
+  animation-delay: -30s;
 }
-.blob:nth-child(4) {
-  width: 50vmax; height: 44vmax; top: -12%; right: -8%;
-  background: radial-gradient(ellipse at 42% 42%, #1E7575 0%, #060E1E 55%, transparent 78%);
-  filter: blur(85px); opacity: .22;
-  animation: drift4 30s ease-in-out infinite alternate, morph4 24s ease-in-out infinite alternate;
-  animation-delay: -5s, -20s;
-}
-.blob:nth-child(5) {
-  width: 55vmax; height: 50vmax; bottom: -18%; left: -8%;
-  background: radial-gradient(ellipse at 48% 58%, #0D3A60 0%, #040D1C 55%, transparent 76%);
-  filter: blur(90px); opacity: .32;
-  animation: drift5 26s ease-in-out infinite alternate, morph5 20s ease-in-out infinite alternate;
-  animation-delay: -11s, -8s;
-}
-@keyframes drift1 { from { transform: translate(0,0) rotate(-3deg) scale(1); } to { transform: translate(9vw,7vh) rotate(4deg) scale(1.06); } }
-@keyframes drift2 { from { transform: translate(0,0) rotate(2deg) scale(1); } to { transform: translate(-7vw,-9vh) rotate(-5deg) scale(1.05); } }
-@keyframes drift3 { from { transform: translate(0,0) scale(1); } to { transform: translate(-5vw,6vh) scale(1.12); } }
-@keyframes drift4 { from { transform: translate(0,0) rotate(0deg) scale(1); } to { transform: translate(-6vw,8vh) rotate(3deg) scale(1.08); } }
-@keyframes drift5 { from { transform: translate(0,0) rotate(-2deg) scale(1); } to { transform: translate(6vw,-6vh) rotate(5deg) scale(1.07); } }
-@keyframes morph1 { 0% { border-radius: 60% 40% 30% 70%/60% 30% 70% 40%; } 50% { border-radius: 30% 60% 70% 40%/50% 60% 30% 60%; } 100% { border-radius: 50% 40% 60% 30%/30% 70% 50% 60%; } }
-@keyframes morph2 { 0% { border-radius: 40% 60% 60% 40%/70% 30% 40% 60%; } 50% { border-radius: 60% 40% 40% 60%/30% 60% 70% 40%; } 100% { border-radius: 50% 50% 60% 40%/40% 60% 50% 50%; } }
-@keyframes morph3 { 0% { border-radius: 50% 50% 40% 60%/30% 60% 40% 70%; } 50% { border-radius: 30% 70% 60% 40%/60% 30% 60% 40%; } 100% { border-radius: 60% 40% 30% 70%/40% 60% 30% 70%; } }
-@keyframes morph4 { 0% { border-radius: 70% 30% 40% 60%/40% 50% 60% 50%; } 50% { border-radius: 40% 60% 70% 30%/60% 40% 40% 60%; } 100% { border-radius: 30% 70% 50% 50%/50% 50% 40% 60%; } }
-@keyframes morph5 { 0% { border-radius: 30% 70% 50% 50%/50% 40% 60% 50%; } 50% { border-radius: 60% 40% 30% 70%/40% 60% 50% 40%; } 100% { border-radius: 40% 60% 60% 40%/60% 30% 70% 30%; } }
+/* Translate puro — el compositor lo maneja solo */
+@keyframes fluir1 { from { transform: translate(0,0); } to { transform: translate(8vw,6vh); } }
+@keyframes fluir2 { from { transform: translate(0,0); } to { transform: translate(-7vw,-8vh); } }
+@keyframes fluir3 { from { transform: translate(0,0); } to { transform: translate(-5vw,7vh); } }
 
 /* SVG textura de agua */
 .agua-sup {
@@ -278,13 +284,6 @@ body {
 }
 @keyframes pulso-linea { 0%,100% { opacity:.4; transform: scaleY(.6); } 50% { opacity:1; transform: scaleY(1); } }
 
-/* Fade inferior del hero — gradiente invisible, sin formas */
-.hero::after {
-  content: '';
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 140px; pointer-events: none;
-  background: linear-gradient(to bottom, transparent 0%, rgba(2,8,16,.65) 100%);
-}
 
 /* ════════════════════════════════════════════════════════
    SECCIONES DE MENÚ
@@ -683,8 +682,9 @@ main { position: relative; z-index: 10; }
 
 <!-- ═══ FONDO LÍQUIDO ═══ -->
 <div class="liquid" aria-hidden="true">
-  <div class="blob"></div><div class="blob"></div><div class="blob"></div>
-  <div class="blob"></div><div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
 </div>
 
 <!-- Textura de agua SVG -->
